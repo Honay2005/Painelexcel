@@ -1,154 +1,179 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Automação</title>
+    <title>Painelexcel</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
             margin: 0;
             padding: 0;
+            background-color: #f9f9f9;
         }
-        header {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
+
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+        }
+
+        h1 {
             text-align: center;
+            color: #333;
+            margin-top: 30px;
         }
+
         .tabs {
             display: flex;
             justify-content: center;
-            margin: 20px 0;
+            margin-top: 30px;
         }
+
         .tab {
             padding: 10px 20px;
             cursor: pointer;
-            background-color: #ddd;
-            border: 1px solid #ccc;
-            margin-right: 5px;
+            background-color: #e0e0e0;
+            margin: 0 5px;
             border-radius: 5px 5px 0 0;
         }
+
         .tab.active {
-            background-color: #4CAF50;
-            color: white;
+            background-color: #ffffff;
+            border-bottom: 2px solid #ffffff;
+            font-weight: bold;
         }
+
         .tab-content {
             display: none;
             padding: 20px;
-            border: 1px solid #ccc;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
             border-radius: 0 5px 5px 5px;
-            background-color: white;
         }
+
         .tab-content.active {
             display: block;
         }
-        .form-group {
-            margin-bottom: 15px;
+
+        .file-upload {
+            margin-top: 20px;
         }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
+
+        input[type="file"] {
+            margin-bottom: 10px;
         }
-        .form-group input {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-        }
+
         button {
-            background-color: #4CAF50;
-            color: white;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
             border: none;
-            padding: 10px 15px;
-            cursor: pointer;
             border-radius: 5px;
+            cursor: pointer;
         }
+
         button:hover {
-            background-color: #45a049;
+            background-color: #0056b3;
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #888;
+            font-size: 14px;
         }
     </style>
-    <script>
-        // Tab switching logic
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', function () {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
-                this.classList.add('active');
-                document.getElementById(this.dataset.tab).classList.add('active');
-            });
-        });
-
-        // Process file to edit
-        async function processFile() {
-            const fileInput = document.getElementById('file-to-edit');
-            if (fileInput.files.length === 0) {
-                alert('Por favor, selecione um arquivo.');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('file', fileInput.files[0]);
-
-            const response = await fetch('/upload', {
-                method: 'POST',
-                body: formData
-            });
-
-            const result = await response.json();
-            alert(result.message || 'Erro ao processar o arquivo.');
-        }
-
-        // Process report upload
-        function processReport() {
-            const reportInput = document.getElementById('report-file');
-            if (reportInput.files.length === 0) {
-                alert('Por favor, selecione um relatório.');
-                return;
-            }
-            const report = reportInput.files[0];
-            alert(`Relatório "${report.name}" enviado com sucesso!`);
-            // Aqui você pode enviar o relatório para o backend usando fetch ou AJAX
-        }
-
-        // Timer to repeat actions every 1 hour
-        function repeatActions() {
-            console.log("Executando ações automáticas...");
-            // Aqui você pode chamar as funções processFile() e processReport() ou outras ações
-        }
-
-        // Configurar o timer para repetir a cada 1 hora (3600000 ms)
-        setInterval(repeatActions, 3600000);
-    </script>
 </head>
 <body>
-    <header>
-        <h1>Painel de Automação</h1>
-    </header>
-    <div class="tabs">
-        <div class="tab active" data-tab="edit-file">Anexar Arquivo</div>
-        <div class="tab" data-tab="upload-report">Upload Relatório</div>
-    </div>
-    <div class="tab-content active" id="edit-file">
-        <h2>Anexar Arquivo a Ser Editado</h2>
-        <form id="edit-file-form">
-            <div class="form-group">
-                <label for="file-to-edit">Selecione o arquivo:</label>
-                <input type="file" id="file-to-edit" accept=".xlsx">
+    <div class="container">
+        <h1>Painelexcel</h1>
+        <div class="tabs">
+            <div class="tab active" data-tab="edit">Editar Planilha</div>
+            <div class="tab" data-tab="report">Relatório</div>
+        </div>
+
+        <div class="tab-content active" id="edit">
+            <h2>Enviar Planilha para Edição</h2>
+            <div class="file-upload">
+                <input type="file" id="file-to-edit" accept=".xlsx,.xls">
+                <br>
+                <button type="button" onclick="window.processFile()">OK</button>
             </div>
-            <button type="button" onclick="processFile()">OK</button>
-        </form>
-    </div>
-    <div class="tab-content" id="upload-report">
-        <h2>Upload do Relatório</h2>
-        <form id="upload-report-form">
-            <div class="form-group">
-                <label for="report-file">Selecione o relatório:</label>
-                <input type="file" id="report-file" accept=".xlsx">
+        </div>
+
+        <div class="tab-content" id="report">
+            <h2>Enviar Relatório</h2>
+            <div class="file-upload">
+                <input type="file" id="report-file" accept=".pdf,.docx">
+                <br>
+                <button type="button" onclick="window.processReport()">Enviar</button>
             </div>
-            <button type="button" onclick="processReport()">OK</button>
-        </form>
+        </div>
     </div>
+
+    <div class="footer">
+        &copy; 2025 Painelexcel. Todos os direitos reservados.
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Alternância de abas
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function () {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+                    this.classList.add('active');
+                    document.getElementById(this.dataset.tab).classList.add('active');
+                });
+            });
+
+            // Função para processar planilha
+            async function processFile() {
+                const fileInput = document.getElementById('file-to-edit');
+                if (fileInput.files.length === 0) {
+                    alert('Por favor, selecione um arquivo.');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+
+                try {
+                    const response = await fetch('/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+                    alert(result.message || 'Arquivo processado com sucesso.');
+                } catch (error) {
+                    alert('Erro ao processar o arquivo.');
+                }
+            }
+
+            // Função para enviar relatório
+            function processReport() {
+                const reportInput = document.getElementById('report-file');
+                if (reportInput.files.length === 0) {
+                    alert('Por favor, selecione um relatório.');
+                    return;
+                }
+                const report = reportInput.files[0];
+                alert(`Relatório "${report.name}" enviado com sucesso!`);
+            }
+
+            // Função de repetição automática a cada 1h
+            function repeatActions() {
+                console.log("Executando ações automáticas...");
+            }
+
+            setInterval(repeatActions, 3600000);
+
+            // Expor funções globalmente
+            window.processFile = processFile;
+            window.processReport = processReport;
+        });
+    </script>
 </body>
 </html>
+
